@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Student Report</h1>
+    <p>Academic performance details</p>
+</div>
+
+<div class="card">
+
+    <h2>{{ student.name }}</h2>
+
+    <p>
+        <strong>Roll Number:</strong>
+        {{ student.roll_no }}
+    </p>
+
+    <p>
+        <strong>Class:</strong>
+        {{ student.class_name }}
+    </p>
+
+    <hr>
+
+    <h3>Academic Performance</h3>
+
+    <div class="table-container">
+
+        <table>
+
+            <tr>
+                <th>Subject</th>
+                <th>Marks</th>
+            </tr>
+
+            <tr>
+                <td>Mathematics</td>
+                <td>{{ student.maths }}</td>
+            </tr>
+
+            <tr>
+                <td>Python</td>
+                <td>{{ student.python }}</td>
+            </tr>
+
+            <tr>
+                <td>DSA</td>
+                <td>{{ student.dsa }}</td>
+            </tr>
+
+            <tr>
+                <td>DBMS</td>
+                <td>{{ student.dbms }}</td>
+            </tr>
+
+            <tr>
+                <td>Computer Networks</td>
+                <td>{{ student.networks }}</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <h3>{{ student.total }}</h3>
+            <p>Total Marks / 500</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ student.percentage }}%</h3>
+            <p>Percentage</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ student.grade }}</h3>
+            <p>Grade</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>{{ student.attendance }}%</h3>
+            <p>Attendance</p>
+        </div>
+
+    </div>
+
+    <br>
+
+    <a href="{{ url_for('students') }}" class="btn">
+        Back to Students
+    </a>
+
+</div>
+
+{% endblock %}
