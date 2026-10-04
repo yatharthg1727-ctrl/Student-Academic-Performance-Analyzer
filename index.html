@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+
+Dashboard | Student Analyzer
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<section class="hero">
+
+    <div>
+
+        <p class="eyebrow">
+            ACADEMIC INTELLIGENCE SYSTEM
+        </p>
+
+                
+        <h1>
+            Student Performance Dashboard
+        </h1>
+
+
+        <p>
+
+            Manage student records, analyze academic
+            performance and generate detailed reports
+            from one place.
+
+        </p>
+
+
+        <div class="hero-actions">
+
+            <a href="{{ url_for('add_student') }}"
+               class="btn primary">
+
+                + Add Student
+
+            </a>
+
+
+            <a href="{{ url_for('students') }}"
+               class="btn secondary">
+
+                View Records
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<section class="stats-grid">
+
+
+    <div class="stat-card">
+
+        <span>
+            Total Students
+        </span>
+
+        <strong>
+            {{ total_students }}
+        </strong>
+
+        <small>
+            Registered records
+        </small>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <span>
+            Average Percentage
+        </span>
+
+        <strong>
+            {{ avg_percentage }}%
+        </strong>
+
+        <small>
+            Overall academic average
+        </small>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <span>
+            Average Attendance
+        </span>
+
+        <strong>
+            {{ avg_attendance }}%
+        </strong>
+
+        <small>
+            Across all students
+        </small>
+
+    </div>
+
+
+
+    <div class="stat-card">
+
+        <span>
+            System
+        </span>
+
+        <strong class="online">
+            Active
+        </strong>
+
+        <small>
+            Database connected
+        </small>
+
+    </div>
+
+
+</section>
+
+
+
+<section class="dashboard-grid">
+
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    Grade Distribution
+                </h2>
+
+                <p>
+                    Number of students in each grade.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <canvas id="gradeChart"></canvas>
+
+    </div>
+
+
+
+    <div class="panel">
+
+        <div class="panel-header">
+
+            <div>
+
+                <h2>
+                    Subject Average
+                </h2>
+
+                <p>
+                    Average marks by subject.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <canvas id="subjectChart"></canvas>
+
+    </div>
+
+
+</section>
+
+
+
+<section class="panel">
+
+
+    <div class="panel-header">
+
+        <div>
+
+            <h2>
+                Top Performers
+            </h2>
+
+            <p>
+                Students with the highest percentage.
+            </p>
+
+        </div>
+
+
+        <a href="{{ url_for('students') }}"
+           class="text-link">
+
+            View all →
+
+        </a>
+
+    </div>
+
+
+
+    {% if toppers %}
+
+
+    <div class="table-wrap">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Rank
+                    </th>
+
+                    <th>
+                        Student
+                    </th>
+
+                    <th>
+                        Roll No
+                    </th>
+
+                    <th>
+                        Percentage
+                    </th>
+
+                    <th>
+                        Grade
+                    </th>
+
+                    <th>
+                        Performance
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                {% for student in toppers %}
+
+
+                <tr>
+
+                    <td>
+
+                        <span class="rank">
+                            {{ loop.index }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            {{ student["name"] }}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+                        {{ student["roll_no"] }}
+                    </td>
+
+
+                    <td>
+
+                        {{ "%.2f"|format(student["percentage"]) }}%
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="badge">
+
+                            {{ student["grade"] }}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ student["performance"] }}
+
+                    </td>
+
+
+                </tr>
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+    {% else %}
+
+
+    <div class="empty">
+
+        No students available yet.
+
+    </div>
+
+
+    {% endif %}
+
+
+</section>
+
+
+
+<script>
+
+
+const gradeLabels = [
+
+{% for row in grade_data %}
+
+"{{ row['grade'] }}"
+
+{% if not loop.last %},{% endif %}
+
+{% endfor %}
+
+];
+
+
+const gradeValues = [
+
+{% for row in grade_data %}
+
+{{ row['count'] }}
+
+{% if not loop.last %},{% endif %}
+
+{% endfor %}
+
+];
+
+
+
+new Chart(
+
+    document.getElementById("gradeChart"),
+
+    {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: gradeLabels,
+
+            datasets: [
+
+                {
+
+                    data: gradeValues
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom"
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+
+new Chart(
+
+    document.getElementById("subjectChart"),
+
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+
+            {% for subject in subject_averages %}
+
+            "{{ subject }}"
+
+            {% if not loop.last %},{% endif %}
+
+            {% endfor %}
+
+            ],
+
+            datasets: [
+
+                {
+
+                    label: "Average Marks",
+
+                    data: [
+
+                    {% for subject, value in subject_averages.items() %}
+
+                    {{ value }}
+
+                    {% if not loop.last %},{% endif %}
+
+                    {% endfor %}
+
+                    ]
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    max: 100
+
+                }
+
+            }
+
+        }
+
+    }
+
+);
+
+
+</script>
+
+
+{% endblock %}
