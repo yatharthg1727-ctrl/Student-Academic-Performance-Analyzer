@@ -1,26 +1,189 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Student Analyzer{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        AcademicIQ
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
+
 <body>
-    <header class="topbar">
-        <a class="brand" href="{{ url_for('index') }}">
-            <span class="brand-icon">SA</span>
-            <span>Student Analyzer</span>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <a
+            href="{{ url_for('index') }}"
+            class="brand"
+        >
+
+            <span class="brand-logo">
+                A
+            </span>
+
+            <span>
+
+                <strong>
+                    AcademicIQ
+                </strong>
+
+                <small>
+                    Performance Analyzer
+                </small>
+
+            </span>
+
         </a>
-        <nav aria-label="Main navigation">
-            <a href="{{ url_for('index') }}">Dashboard</a>
-            <a href="{{ url_for('students') }}">Students</a>
-            <a href="{{ url_for('add_student') }}">Add student</a>
+
+
+        <div class="nav-title">
+            WORKSPACE
+        </div>
+
+        <nav>
+
+            <a href="{{ url_for('index') }}">
+                ◈ Dashboard
+            </a>
+
+            <a href="{{ url_for('students') }}">
+                ▤ Academic Records
+            </a>
+
+            <a href="{{ url_for('add_student') }}">
+                ＋ Add Record
+            </a>
+
         </nav>
-    </header>
-    <main class="container">
-        {% block content %}{% endblock %}
+
+
+        <div class="nav-title">
+            TOOLS
+        </div>
+
+        <nav>
+
+            <a href="{{ url_for('export_csv') }}">
+                ⇩ Export CSV
+            </a>
+
+        </nav>
+
+
+        <div class="system-card">
+
+            <strong>
+                ● System Ready
+            </strong>
+
+            <small>
+                Academic workspace
+            </small>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <!-- MOBILE HEADER -->
+
+        <header class="mobile-header">
+
+            <a
+                href="{{ url_for('index') }}"
+                class="mobile-brand"
+            >
+
+                <span class="brand-logo">
+                    A
+                </span>
+
+                <strong>
+                    AcademicIQ
+                </strong>
+
+            </a>
+
+            <a
+                href="{{ url_for('add_student') }}"
+                class="mobile-add"
+            >
+                ＋ Add
+            </a>
+
+        </header>
+
+
+        <div class="page-container">
+
+            <!-- FLASH MESSAGES -->
+
+            {% with messages = get_flashed_messages(
+                with_categories=true
+            ) %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endwith %}
+
+
+            {% block content %}
+            {% endblock %}
+
+        </div>
+
+
+        <footer>
+
+            AcademicIQ · Student Academic Performance Analyzer · 2026
+
+        </footer>
+
     </main>
+
+</div>
+
+
+<script
+    src="{{ url_for('static', filename='app.js') }}"
+></script>
+
+
+{% block scripts %}
+{% endblock %}
+
+
 </body>
+
 </html>

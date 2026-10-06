@@ -1,63 +1,297 @@
 {% extends "base.html" %}
 
+{% block title %}
+Academic Records · AcademicIQ
+{% endblock %}
+
+
 {% block content %}
 
-<div class="page-header">
-    <h1>Students</h1>
-    <p>View all registered students</p>
+<div class="page-title">
+
+    <div>
+
+        <span class="eyebrow">
+            RECORD MANAGEMENT
+        </span>
+
+        <h1>
+            Academic Records
+        </h1>
+
+        <p>
+            Manage every student's semester-wise performance.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('add_student') }}"
+        class="btn primary"
+    >
+        ＋ Add Record
+    </a>
+
 </div>
 
-<div class="card">
 
-    {% if students %}
+<form
+    method="GET"
+    class="filter-bar"
+>
 
-    <div class="table-container">
+    <input
+        type="text"
+        name="search"
+        value="{{ search }}"
+        placeholder="Search name, roll number or class..."
+    >
+
+
+    <select name="semester">
+
+        <option value="">
+            All Semesters
+        </option>
+
+        {% for semester in semesters %}
+
+        <option
+            value="{{ semester }}"
+            {% if selected_semester == semester %}
+                selected
+            {% endif %}
+        >
+            {{ semester }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+
+    <select name="grade">
+
+        <option value="">
+            All Grades
+        </option>
+
+        {% for grade in [
+            "A+",
+            "A",
+            "B+",
+            "B",
+            "C",
+            "D",
+            "F"
+        ] %}
+
+        <option
+            value="{{ grade }}"
+            {% if selected_grade == grade %}
+                selected
+            {% endif %}
+        >
+            {{ grade }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+
+    <button class="btn primary">
+        Filter
+    </button>
+
+
+    <a
+        href="{{ url_for('students') }}"
+        class="btn secondary"
+    >
+        Reset
+    </a>
+
+</form>
+
+
+<section class="panel">
+
+    <div class="table-wrap">
 
         <table>
 
             <thead>
+
                 <tr>
-                    <th>Name</th>
-                    <th>Roll No.</th>
-                    <th>Class</th>
-                    <th>Percentage</th>
-                    <th>Grade</th>
-                    <th>Attendance</th>
-                    <th>Action</th>
+
+                    <th>
+                        Student
+                    </th>
+
+                    <th>
+                        Roll No
+                    </th>
+
+                    <th>
+                        Class/Course
+                    </th>
+
+                    <th>
+                        Semester
+                    </th>
+
+                    <th>
+                        Percentage
+                    </th>
+
+                    <th>
+                        Attendance
+                    </th>
+
+                    <th>
+                        Grade
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
                 </tr>
+
             </thead>
+
 
             <tbody>
 
-            {% for student in students %}
+                {% for record in records %}
 
                 <tr>
 
-                    <td>{{ student.name }}</td>
-
-                    <td>{{ student.roll_no }}</td>
-
-                    <td>{{ student.class_name }}</td>
-
-                    <td>{{ student.percentage }}%</td>
-
                     <td>
-                        <strong>{{ student.grade }}</strong>
+
+                        <strong>
+                            {{ record.name }}
+                        </strong>
+
                     </td>
 
-                    <td>{{ student.attendance }}%</td>
 
                     <td>
-                        <a
-                            href="{{ url_for('report', student_id=student.id) }}"
-                            class="btn btn-primary">
-                            View Report
-                        </a>
+                        {{ record.roll_no }}
+                    </td>
+
+
+                    <td>
+                        {{ record.class_name }}
+                    </td>
+
+
+                    <td>
+
+                        <span class="soft-badge">
+                            {{ record.semester }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            {{ "%.2f"|format(
+                                record.percentage
+                            ) }}%
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ "%.1f"|format(
+                            record.attendance
+                        ) }}%
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="badge">
+                            {{ record.grade }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="actions">
+
+                            <a
+                                href="{{ url_for(
+                                    'report',
+                                    record_id=record.id
+                                ) }}"
+                            >
+                                View
+                            </a>
+
+
+                            <a
+                                href="{{ url_for(
+                                    'edit_student',
+                                    record_id=record.id
+                                ) }}"
+                            >
+                                Edit
+                            </a>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'delete_student',
+                                    record_id=record.id
+                                ) }}"
+                                onsubmit="
+                                    return confirm(
+                                        'Delete this academic record?'
+                                    )
+                                "
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="delete-link"
+                                >
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
                     </td>
 
                 </tr>
 
-            {% endfor %}
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="empty"
+                    >
+                        No academic records found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
 
             </tbody>
 
@@ -65,19 +299,6 @@
 
     </div>
 
-    {% else %}
-
-    <div class="empty-state">
-        <h3>No Students Found</h3>
-        <p>Add a student to see the academic records here.</p>
-
-        <a href="{{ url_for('add_student') }}" class="btn btn-primary">
-            Add Student
-        </a>
-    </div>
-
-    {% endif %}
-
-</div>
+</section>
 
 {% endblock %}

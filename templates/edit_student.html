@@ -1,130 +1,369 @@
 {% extends "base.html" %}
 
+{% block title %}
+Edit Record · AcademicIQ
+{% endblock %}
+
+
 {% block content %}
 
-<div class="page-header">
-    <h1>Edit Student</h1>
-    <p>Update student academic information</p>
+<div class="page-title">
+
+    <div>
+
+        <span class="eyebrow">
+            EDIT ACADEMIC RECORD
+        </span>
+
+        <h1>
+            Update academic record
+        </h1>
+
+        <p>
+            Change student information, semester or subjects.
+        </p>
+
+    </div>
+
 </div>
 
-<div class="card">
 
-<form method="POST">
+<form
+    method="POST"
+    class="form-card panel"
+>
 
-    <div class="form-grid">
 
-        <div class="form-group">
-            <label>Student Name</label>
-            <input
-                type="text"
-                name="name"
-                value="{{ student.name }}"
-                required>
+    <!-- STUDENT INFORMATION -->
+
+    <section class="form-section">
+
+        <h2>
+            01 · Student Information
+        </h2>
+
+
+        <div class="form-grid">
+
+            <div class="field">
+
+                <label>
+                    Student Name
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    required
+                    value="{{ record.name }}"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Roll Number
+                </label>
+
+                <input
+                    type="text"
+                    name="roll_no"
+                    required
+                    value="{{ record.roll_no }}"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Class / Course
+                </label>
+
+                <input
+                    type="text"
+                    name="class_name"
+                    required
+                    value="{{ record.class_name }}"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    Attendance %
+                </label>
+
+                <input
+                    type="number"
+                    name="attendance"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    required
+                    value="{{ record.attendance }}"
+                >
+
+            </div>
+
         </div>
 
-        <div class="form-group">
-            <label>Roll Number</label>
-            <input
-                type="text"
-                name="roll_no"
-                value="{{ student.roll_no }}"
-                required>
+    </section>
+
+
+    <!-- SEMESTER -->
+
+    <section class="form-section">
+
+        <h2>
+            02 · Semester
+        </h2>
+
+
+        <div class="form-grid">
+
+            <div class="field">
+
+                <label>
+                    Semester
+                </label>
+
+                <select
+                    name="semester"
+                    id="semester"
+                    required
+                >
+
+                    {% for semester in semesters %}
+
+                    <option
+                        value="{{ semester }}"
+                        {% if record.semester == semester %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ semester }}
+                    </option>
+
+                    {% endfor %}
+
+                    <option
+                        value="Custom"
+                        {% if record.semester not in semesters %}
+                            selected
+                        {% endif %}
+                    >
+                        Custom Semester
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                class="field"
+                id="customSemesterBox"
+            >
+
+                <label>
+                    Custom Semester
+                </label>
+
+                <input
+                    type="text"
+                    name="custom_semester"
+                    id="customSemester"
+                    value="{% if record.semester not in semesters %}{{ record.semester }}{% endif %}"
+                    placeholder="e.g. Year 2 Term 1"
+                >
+
+            </div>
+
         </div>
 
-        <div class="form-group">
-            <label>Class</label>
-            <input
-                type="text"
-                name="class_name"
-                value="{{ student.class_name }}"
-                required>
+    </section>
+
+
+    <!-- SUBJECTS -->
+
+    <section class="form-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    03 · Subjects & Marks
+                </h2>
+
+                <p class="section-description">
+                    Add, remove or change subjects.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="addSubject"
+                class="btn secondary"
+            >
+                ＋ Add Subject
+            </button>
+
         </div>
 
-        <div class="form-group">
-            <label>Attendance (%)</label>
-            <input
-                type="number"
-                name="attendance"
-                value="{{ student.attendance }}"
-                min="0"
-                max="100"
-                step="0.01"
-                required>
+
+        <div id="subjectsContainer">
+
+            {% for subject in subjects %}
+
+            <div class="subject-row">
+
+                <div class="field">
+
+                    <label>
+                        Subject Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="subject_name[]"
+                        required
+                        value="{{ subject.subject_name }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Obtained Marks
+                    </label>
+
+                    <input
+                        type="number"
+                        name="marks[]"
+                        min="0"
+                        step="0.01"
+                        required
+                        value="{{ subject.marks }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Maximum Marks
+                    </label>
+
+                    <input
+                        type="number"
+                        name="max_marks[]"
+                        min="1"
+                        step="0.01"
+                        required
+                        value="{{ subject.max_marks }}"
+                    >
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="remove-subject"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            {% endfor %}
+
         </div>
+
+
+        <div class="tip-box">
+
+            You can use different subjects for every semester.
+
+        </div>
+
+    </section>
+
+
+    <!-- PREVIEW -->
+
+    <section class="result-preview">
+
+        <div>
+
+            <span>
+                Percentage
+            </span>
+
+            <strong id="previewPercentage">
+                {{ "%.2f"|format(record.percentage) }}%
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Grade
+            </span>
+
+            <strong id="previewGrade">
+                {{ record.grade }}
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Subjects
+            </span>
+
+            <strong id="previewSubjects">
+                {{ subjects|length }}
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <div class="form-actions">
+
+        <a
+            href="{{ url_for('students') }}"
+            class="btn secondary"
+        >
+            Cancel
+        </a>
+
+        <button
+            type="submit"
+            class="btn primary"
+        >
+            Save Changes
+        </button>
 
     </div>
-
-    <h3>Subject Marks</h3>
-
-    <div class="form-grid">
-
-        <div class="form-group">
-            <label>Mathematics</label>
-            <input
-                type="number"
-                name="maths"
-                value="{{ student.maths }}"
-                min="0"
-                max="100"
-                required>
-        </div>
-
-        <div class="form-group">
-            <label>Python</label>
-            <input
-                type="number"
-                name="python"
-                value="{{ student.python }}"
-                min="0"
-                max="100"
-                required>
-        </div>
-
-        <div class="form-group">
-            <label>DSA</label>
-            <input
-                type="number"
-                name="dsa"
-                value="{{ student.dsa }}"
-                min="0"
-                max="100"
-                required>
-        </div>
-
-        <div class="form-group">
-            <label>DBMS</label>
-            <input
-                type="number"
-                name="dbms"
-                value="{{ student.dbms }}"
-                min="0"
-                max="100"
-                required>
-        </div>
-
-        <div class="form-group">
-            <label>Computer Networks</label>
-            <input
-                type="number"
-                name="networks"
-                value="{{ student.networks }}"
-                min="0"
-                max="100"
-                required>
-        </div>
-
-    </div>
-
-    <button type="submit" class="btn btn-primary">
-        Update Student
-    </button>
-
-    <a href="{{ url_for('students') }}" class="btn">
-        Cancel
-    </a>
 
 </form>
-
-</div>
 
 {% endblock %}

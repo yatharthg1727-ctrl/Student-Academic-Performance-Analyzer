@@ -1,81 +1,388 @@
 {% extends "base.html" %}
 
+{% block title %}
+Add Record · AcademicIQ
+{% endblock %}
+
+
 {% block content %}
 
-<div class="page-header">
-    <h1>Add Student</h1>
-    <p>Enter student academic details</p>
+<div class="page-title">
+
+    <div>
+
+        <span class="eyebrow">
+            NEW ACADEMIC RECORD
+        </span>
+
+        <h1>
+            Add academic record
+        </h1>
+
+        <p>
+            Create a semester record with any subjects you want.
+        </p>
+
+    </div>
+
 </div>
 
-<div class="card">
 
-    <form method="POST">
+<form
+    method="POST"
+    class="form-card panel"
+>
+
+
+    <!-- STUDENT -->
+
+    <section class="form-section">
+
+        <h2>
+            01 · Student Information
+        </h2>
+
+        <p class="section-description">
+            Basic information about the student.
+        </p>
+
 
         <div class="form-grid">
 
-            <div class="form-group">
-                <label>Student Name</label>
-                <input type="text" name="name" required>
+            <div class="field">
+
+                <label>
+                    Student Name
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    required
+                    value="{{ form.get('name', '') if form else '' }}"
+                    placeholder="e.g. Yatharth Jain"
+                >
+
             </div>
 
-            <div class="form-group">
-                <label>Roll Number</label>
-                <input type="text" name="roll_no" required>
+
+            <div class="field">
+
+                <label>
+                    Roll Number
+                </label>
+
+                <input
+                    type="text"
+                    name="roll_no"
+                    required
+                    value="{{ form.get('roll_no', '') if form else '' }}"
+                    placeholder="e.g. CS101"
+                >
+
             </div>
 
-            <div class="form-group">
-                <label>Class</label>
-                <input type="text" name="class_name" required>
+
+            <div class="field">
+
+                <label>
+                    Class / Course
+                </label>
+
+                <input
+                    type="text"
+                    name="class_name"
+                    required
+                    value="{{ form.get('class_name', '') if form else '' }}"
+                    placeholder="e.g. B.Tech CSE"
+                >
+
             </div>
 
-            <div class="form-group">
-                <label>Attendance (%)</label>
-                <input type="number" name="attendance" min="0" max="100" step="0.01" required>
+
+            <div class="field">
+
+                <label>
+                    Attendance %
+                </label>
+
+                <input
+                    type="number"
+                    name="attendance"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    required
+                    value="{{ form.get('attendance', '') if form else '' }}"
+                    placeholder="e.g. 87.5"
+                >
+
             </div>
 
         </div>
 
-        <h3>Subject Marks</h3>
+    </section>
+
+
+    <!-- SEMESTER -->
+
+    <section class="form-section">
+
+        <h2>
+            02 · Semester
+        </h2>
+
+        <p class="section-description">
+            Select the academic semester for this record.
+        </p>
+
 
         <div class="form-grid">
 
-            <div class="form-group">
-                <label>Mathematics</label>
-                <input type="number" name="maths" min="0" max="100" required>
+            <div class="field">
+
+                <label>
+                    Semester
+                </label>
+
+                <select
+                    name="semester"
+                    id="semester"
+                    required
+                >
+
+                    <option value="">
+                        Select semester
+                    </option>
+
+                    {% for semester in semesters %}
+
+                    <option
+                        value="{{ semester }}"
+                        {% if form and form.get('semester') == semester %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ semester }}
+                    </option>
+
+                    {% endfor %}
+
+                    <option value="Custom">
+                        Custom Semester
+                    </option>
+
+                </select>
+
             </div>
 
-            <div class="form-group">
-                <label>Python</label>
-                <input type="number" name="python" min="0" max="100" required>
-            </div>
 
-            <div class="form-group">
-                <label>DSA</label>
-                <input type="number" name="dsa" min="0" max="100" required>
-            </div>
+            <div
+                class="field"
+                id="customSemesterBox"
+            >
 
-            <div class="form-group">
-                <label>DBMS</label>
-                <input type="number" name="dbms" min="0" max="100" required>
-            </div>
+                <label>
+                    Custom Semester
+                </label>
 
-            <div class="form-group">
-                <label>Computer Networks</label>
-                <input type="number" name="networks" min="0" max="100" required>
+                <input
+                    type="text"
+                    name="custom_semester"
+                    id="customSemester"
+                    placeholder="e.g. Year 2 Term 1"
+                >
+
             </div>
 
         </div>
 
-        <button type="submit" class="btn btn-primary">
-            Add Student
-        </button>
+    </section>
 
-        <a href="{{ url_for('students') }}" class="btn">
+
+    <!-- SUBJECTS -->
+
+    <section class="form-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    03 · Subjects & Marks
+                </h2>
+
+                <p class="section-description">
+                    Add as many subjects as required.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="addSubject"
+                class="btn secondary"
+            >
+                ＋ Add Subject
+            </button>
+
+        </div>
+
+
+        <div id="subjectsContainer">
+
+            {% for subject in subjects %}
+
+            <div class="subject-row">
+
+                <div class="field">
+
+                    <label>
+                        Subject Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="subject_name[]"
+                        required
+                        value="{{ subject.name }}"
+                        placeholder="e.g. Artificial Intelligence"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Obtained Marks
+                    </label>
+
+                    <input
+                        type="number"
+                        name="marks[]"
+                        min="0"
+                        step="0.01"
+                        required
+                        value="{{ subject.marks }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Maximum Marks
+                    </label>
+
+                    <input
+                        type="number"
+                        name="max_marks[]"
+                        min="1"
+                        step="0.01"
+                        required
+                        value="{{ subject.max_marks }}"
+                    >
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="remove-subject"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="tip-box">
+
+            <strong>
+                Flexible subjects:
+            </strong>
+
+            You can add AI, Machine Learning, Java,
+            Physics, Economics, English, Cyber Security
+            or any other subject.
+
+        </div>
+
+    </section>
+
+
+    <!-- LIVE PREVIEW -->
+
+    <section class="result-preview">
+
+        <div>
+
+            <span>
+                Percentage
+            </span>
+
+            <strong id="previewPercentage">
+                0.00%
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Grade
+            </span>
+
+            <strong id="previewGrade">
+                F
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Subjects
+            </span>
+
+            <strong id="previewSubjects">
+                0
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACTIONS -->
+
+    <div class="form-actions">
+
+        <a
+            href="{{ url_for('students') }}"
+            class="btn secondary"
+        >
             Cancel
         </a>
 
-    </form>
+        <button
+            type="submit"
+            class="btn primary"
+        >
+            Create Academic Record
+        </button>
 
-</div>
+    </div>
+
+</form>
 
 {% endblock %}

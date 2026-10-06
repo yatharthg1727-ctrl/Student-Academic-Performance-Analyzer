@@ -2,4 +2,7 @@
 venv/
 __pycache__/
 *.pyc
-.env
+.envstudents.db
+students_backup_before_upgrade.db
+__pycache__/
+.venv/
