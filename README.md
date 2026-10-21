@@ -6,6 +6,8 @@ The Student Academic Performance Analyzer is a Python-based web application desi
 
 The project combines web development, database management, and data analysis to demonstrate how technology can simplify academic record management and help identify areas where students may need improvement.
 
+https://student-academic-performance-analyz.vercel.app/
+
 ---
 
 ## 📌 Table of Contents
